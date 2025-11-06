@@ -20,8 +20,7 @@ int main(int argc, char* argv[]) {
     
     // Voici des fonctions utiles pour réaliser le TP. 
     // TODO: Il faudrait les placer dans des classes appropriées.
-    vector<Point> points = creerPoints(args);
-    imprimerGrille(points);
+    NuageDePoints nuageDePoints = NuageDePoints(args);
     
     // Ce sont différentes textures possibles. Seules les 2 premières sont utilisées dans les scénarios du TP.
     vector<char> texturesNuages = {'o', '#', '$'};
@@ -42,6 +41,19 @@ int main(int argc, char* argv[]) {
         getline(std::cin, cmd);
 
         if (cmd == "q") break;
+        if(cmd == "c1")
+        {
+            auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
+            nuageDePoints.setStrategieCreationSurface(stratSurface);
+        }
+        if(cmd == "c2")
+        {
+            auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
+            nuageDePoints.setStrategieCreationSurface(stratSurface);
+        }
+        if (cmd == "o1" || cmd == "o2") {
+            nuageDePoints.imprimerGrille(cmd);
+        }
     }
 
     return 0;

@@ -32,14 +32,15 @@ void tracerLigne(vector<vector<char>>& grille, int x0, int y0, int x1, int y1) {
     }
 }
 
-
-void imprimerGrille(const vector<Point>& points) {
+void NuageDePoints::imprimerGrille(const string& cmd) {
     // On crée une grille.
     vector<vector<char>> grille(HAUTEUR, vector<char>(LARGEUR, ' '));
 
     // On trace une ligne entre le point 0 et 1.
     // TODO : Remplacer par un tracé selon la commande de l'utilisateur (c1 ou c2)
-    tracerLigne(grille, points[0].x, points[0].y, points[1].x, points[1].y);
+    //tracerLigne(grille, points[0].x, points[0].y, points[1].x, points[1].y);
+
+    stratSurface->relierPoints(grille, points);
 
     // On imprime la grille.
     for (int y = HAUTEUR - 1; y >= 0; --y) {
@@ -51,7 +52,7 @@ void imprimerGrille(const vector<Point>& points) {
 
 
 
-vector<Point> creerPoints(const string& ligne) {
+NuageDePoints::NuageDePoints(const string& ligne) {
     vector<Point> points;
     // On crée un flux de lecture (istringstream) à partir de la chaîne ligne.
     istringstream iss(ligne);
@@ -73,5 +74,10 @@ vector<Point> creerPoints(const string& ligne) {
             }
         }
     }
-    return points;
+    this->points = points;
+}
+
+void NuageDePoints::setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface)
+{
+    this->stratSurface = stratSurface;
 }

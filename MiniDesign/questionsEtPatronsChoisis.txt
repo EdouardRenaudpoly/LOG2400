@@ -1,0 +1,8 @@
+1 - Est-ce qu'on devrait faire en sorte que imprimer grille soit << de NuageDePoints et créerPoints le constructeur ?
+
+
+
+Patrons choisis :
+
+Pour efficacement faire les liens entre les points lors des commandes o1 et o2 on a décidé d'utiliser le patron stratégie.
+Ainsi, c1 et c2 servent à définir la stratégie de lien entre les objets et o1 et o2 appellent la fonction "relierPoints" de la stratégie.
