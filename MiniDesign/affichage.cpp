@@ -6,7 +6,8 @@
 
 using namespace std;
 
-void tracerLigne(vector<vector<char>>& grille, int x0, int y0, int x1, int y1) {
+void tracerLigne(vector<vector<char>> &grille, int x0, int y0, int x1, int y1)
+{
     // Distance verticale
     int lignes = abs(y1 - y0);
     // Si la ligne est horizontale 
@@ -50,9 +51,7 @@ void NuageDePoints::imprimerGrille(const string& cmd) {
     }
 }
 
-
-
-NuageDePoints::NuageDePoints(const string& ligne) {
+vector<Point> PointFactory::creerPoints(const string& ligne) {
     vector<Point> points;
     // On crée un flux de lecture (istringstream) à partir de la chaîne ligne.
     istringstream iss(ligne);
@@ -74,10 +73,48 @@ NuageDePoints::NuageDePoints(const string& ligne) {
             }
         }
     }
+    return points;
+}
+
+NuageDePoints::NuageDePoints(const vector<Point>& points) 
+{
     this->points = points;
 }
 
 void NuageDePoints::setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface)
 {
     this->stratSurface = stratSurface;
+}
+
+char NuageDePoints::getTexture() const
+{
+    return texture;
+}
+
+bool NuageDePoints::contientPoint(int idPoint) const
+{
+    for (const auto& p : points) {
+        if (p.id == idPoint)
+            return true;
+    }
+    return false;
+}
+
+std::ostream &operator<<(std::ostream& os, const NuageDePoints& nuageDePoints)
+{
+    std::cout << "Nuage '" << nuageDePoints.texture << "' contient les points:";
+
+    for(auto&& point: nuageDePoints.points)
+    {
+        cout << " " << point.id;
+    }
+
+    std::cout << endl;
+    return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const Point &p)
+{
+    os << "(" << p.x << ", " << p.y << ")";
+    return os;
 }
