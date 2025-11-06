@@ -9,7 +9,7 @@ const int HAUTEUR = 20;
 
 class PointFactory{
 public:
-    std::vector<Point> creerPoints(const std::string& ligne);
+    std::vector<std::shared_ptr<Point>> creerPoints(const std::string& ligne);
 };
 
 struct Point {
@@ -23,14 +23,14 @@ class NuageDePoints
 {
 public:
     void imprimerGrille(const std::string& cmd);
-    NuageDePoints(const vector<Point>& points);
+    NuageDePoints(const std::vector<std::shared_ptr<Point>>& points);
     void setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface);
     friend std::ostream& operator<<(std::ostream& os, const NuageDePoints& nuageDePoints);
     char getTexture() const;
     bool contientPoint(int idPoint) const;
 private:
     char texture;
-    std::vector<Point> points;
+    std::vector<std::shared_ptr<Point>> points;
     std::shared_ptr<StrategieCreationSurface> stratSurface;
 };
 class Surface{

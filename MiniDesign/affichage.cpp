@@ -51,8 +51,8 @@ void NuageDePoints::imprimerGrille(const string& cmd) {
     }
 }
 
-vector<Point> PointFactory::creerPoints(const string& ligne) {
-    vector<Point> points;
+vector<shared_ptr<Point>> PointFactory::creerPoints(const string& ligne) {
+    vector<shared_ptr<Point>> points;
     // On crée un flux de lecture (istringstream) à partir de la chaîne ligne.
     istringstream iss(ligne);
     string token;
@@ -69,14 +69,15 @@ vector<Point> PointFactory::creerPoints(const string& ligne) {
             int x, y;
             // On ajoute un point {x, y} au vecteur de points.
             if (pair >> x >> y) {
-                points.push_back({x, y});
+                Point p {x,y};
+                points.push_back(make_shared<Point>(p));
             }
         }
     }
     return points;
 }
 
-NuageDePoints::NuageDePoints(const vector<Point>& points) 
+NuageDePoints::NuageDePoints(const std::vector<std::shared_ptr<Point>>& points) 
 {
     this->points = points;
 }
@@ -94,7 +95,7 @@ char NuageDePoints::getTexture() const
 bool NuageDePoints::contientPoint(int idPoint) const
 {
     for (const auto& p : points) {
-        if (p.id == idPoint)
+        if (p->id == idPoint)
             return true;
     }
     return false;
@@ -106,7 +107,7 @@ std::ostream &operator<<(std::ostream& os, const NuageDePoints& nuageDePoints)
 
     for(auto&& point: nuageDePoints.points)
     {
-        cout << " " << point.id;
+        cout << " " << point->id;
     }
 
     std::cout << endl;

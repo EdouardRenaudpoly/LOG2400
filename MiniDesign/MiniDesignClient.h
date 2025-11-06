@@ -4,7 +4,7 @@
 
 class MiniDesignClient{
 public:
-    MiniDesignClient(const std::vector<Point>& points)
+    MiniDesignClient(const std::vector<std::shared_ptr<Point>>& points)
     {
         this->points = points;
     }
@@ -20,7 +20,7 @@ public:
     char trouverTexture();
     void creerNuage();
 private:
-    std::vector<Point> points;
+    std::vector<std::shared_ptr<Point>> points;
     std::vector<NuageDePoints> nuages;
     std::vector<Surface> surfaces;
 };
