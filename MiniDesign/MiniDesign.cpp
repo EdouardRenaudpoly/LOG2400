@@ -52,24 +52,31 @@ int main(int argc, char* argv[]) {
         {
             miniDesignClient.creerNuage();
         }
+        if(cmd == "d")
+        {
+            miniDesignClient.deplacerPoint();
+        }
+        if(cmd == "s")
+        {
+            miniDesignClient.supprimerPoint();
+        }
         if(cmd == "c1")
         {
             auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
-            for(auto&& nuageDePoints : nuages)
-            {
-                nuageDePoints.setStrategieCreationSurface(stratSurface);
-            }
+            miniDesignClient.setStrategieCreationSurface(stratSurface);
         }
         if(cmd == "c2")
         {
             auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
-            for(auto&& nuageDePoints : nuages)
-            {
-                nuageDePoints.setStrategieCreationSurface(stratSurface);
-            }
+            miniDesignClient.setStrategieCreationSurface(stratSurface);
         }
-        if (cmd == "o1" || cmd == "o2") {
-            nuageDePoints.imprimerGrille(cmd);
+        if (cmd == "o1")
+        {
+            miniDesignClient.afficherGrilleTexture();
+        }
+        if(cmd == "o2")
+        {
+            miniDesignClient.afficherGrilleID();
         }
     }
 

@@ -14,13 +14,11 @@ public:
     void fusionnerPoints();
     void deplacerPoint();
     void supprimerPoint();
-    void construireSurfacesC1();
-    void construireSurfacesC2();
+    void setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation);
     void boucleCommande();
     char trouverTexture();
     void creerNuage();
 private:
     std::vector<std::shared_ptr<Point>> points;
     std::vector<NuageDePoints> nuages;
-    std::vector<Surface> surfaces;
 };

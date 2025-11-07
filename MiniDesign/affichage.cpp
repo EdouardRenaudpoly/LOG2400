@@ -101,6 +101,17 @@ bool NuageDePoints::contientPoint(int idPoint) const
     return false;
 }
 
+void NuageDePoints::supprimerPoint(int idPoint) {
+    points.erase(
+        std::remove_if(points.begin(), points.end(),
+            [&](const std::shared_ptr<Point>& point) {
+                return point->id == idPoint;
+            }),
+        points.end()
+    );
+}
+
+
 std::ostream &operator<<(std::ostream& os, const NuageDePoints& nuageDePoints)
 {
     std::cout << "Nuage '" << nuageDePoints.texture << "' contient les points:";

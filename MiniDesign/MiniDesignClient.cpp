@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cctype>
 #include <sstream>
+using namespace std;
 
 void MiniDesignClient::afficherListeEtNuages()
 {
@@ -24,6 +25,33 @@ void MiniDesignClient::afficherListeEtNuages()
     {
         std::cout << nuages[i];
     }
+}
+
+void MiniDesignClient::afficherGrille()
+{
+    // On crée une grille.
+    vector<vector<char>> grille(HAUTEUR, vector<char>(LARGEUR, ' '));
+
+    // On trace une ligne entre le point 0 et 1.
+    // TODO : Remplacer par un tracé selon la commande de l'utilisateur (c1 ou c2)
+    //tracerLigne(grille, points[0].x, points[0].y, points[1].x, points[1].y);
+
+    stratSurface->relierPoints(grille, points);
+
+    // On imprime la grille.
+    for (int y = HAUTEUR - 1; y >= 0; --y) {
+        for (int x = 0; x < LARGEUR; ++x)
+            cout << grille[y][x];
+        cout << '\n';
+    }
+}
+
+void MiniDesignClient::afficherGrilleTexture()
+{
+}
+
+void MiniDesignClient::afficherGrilleID()
+{
 }
 
 void MiniDesignClient::creerNuage()
@@ -89,4 +117,28 @@ void MiniDesignClient::deplacerPoint()
 
 void MiniDesignClient::supprimerPoint()
 {
+    int idPoint;
+    std::cout << "ID du point à supprimer: ";
+    std::cin >> idPoint;
+
+    auto it = std::find_if(points.begin(), points.end(),
+        [&](const std::shared_ptr<Point>& p){ return p->id == idPoint; });
+    if (it == points.end()) return;
+
+    std::shared_ptr<Point> pointASupprimer = *it;
+
+    for (auto& nuage : nuages) 
+    {
+        nuage.supprimerPoint(idPoint);
+    }
+
+    points.erase(it);
+}
+
+void MiniDesignClient::setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation)
+{
+    for(auto&& nuage: nuages)
+    {
+        nuage.setStrategieCreationSurface(stratCreation);
+    }
 }
