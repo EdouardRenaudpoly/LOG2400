@@ -4,8 +4,8 @@
 #include "StrategieCreationSurface.h"
 #include <memory>
 
-const int LARGEUR = 30;
-const int HAUTEUR = 20;
+static constexpr int LARGEUR = 50;
+static constexpr int HAUTEUR = 20;
 
 class PointFactory{
 public:
@@ -22,6 +22,7 @@ std::ostream& operator<<(std::ostream& os, const Point& p);
 class NuageDePoints
 {
 public:
+    void relierPoints(std::vector<std::vector<char>>& grille);
     NuageDePoints(const std::vector<std::shared_ptr<Point>>& points);
     void setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface);
     friend std::ostream& operator<<(std::ostream& os, const NuageDePoints& nuageDePoints);

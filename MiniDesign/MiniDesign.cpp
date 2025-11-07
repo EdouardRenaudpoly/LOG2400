@@ -70,13 +70,10 @@ int main(int argc, char* argv[]) {
             auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
             miniDesignClient.setStrategieCreationSurface(stratSurface);
         }
-        if (cmd == "o1")
+        if (cmd == "o1" || cmd == "o2")
         {
-            miniDesignClient.afficherGrilleTexture();
-        }
-        if(cmd == "o2")
-        {
-            miniDesignClient.afficherGrilleID();
+            miniDesignClient.choisirAffichageGrille(cmd);
+            miniDesignClient.afficherGrille();
         }
     }
 

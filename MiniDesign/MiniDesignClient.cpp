@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cctype>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 void MiniDesignClient::afficherListeEtNuages()
@@ -27,33 +28,6 @@ void MiniDesignClient::afficherListeEtNuages()
     }
 }
 
-void MiniDesignClient::afficherGrille()
-{
-    // On crée une grille.
-    vector<vector<char>> grille(HAUTEUR, vector<char>(LARGEUR, ' '));
-
-    // On trace une ligne entre le point 0 et 1.
-    // TODO : Remplacer par un tracé selon la commande de l'utilisateur (c1 ou c2)
-    //tracerLigne(grille, points[0].x, points[0].y, points[1].x, points[1].y);
-
-    stratSurface->relierPoints(grille, points);
-
-    // On imprime la grille.
-    for (int y = HAUTEUR - 1; y >= 0; --y) {
-        for (int x = 0; x < LARGEUR; ++x)
-            cout << grille[y][x];
-        cout << '\n';
-    }
-}
-
-void MiniDesignClient::afficherGrilleTexture()
-{
-}
-
-void MiniDesignClient::afficherGrilleID()
-{
-}
-
 void MiniDesignClient::creerNuage()
 {
     std::vector<std::shared_ptr<Point>> pointsNuage;
@@ -67,7 +41,9 @@ void MiniDesignClient::creerNuage()
         if (std::isdigit(input[i])) 
         {
             int idRecherche = input[i];
-            auto itPoint = std::find(points.begin(), points.end(), [&](const Point& point){ return point.id == idRecherche;});
+
+            auto itPoint = std::find_if(points.begin(), points.end(), 
+            [&](const std::shared_ptr<Point>& p){ return p->id == idRecherche; });
             
             if(itPoint != points.end())
             {
@@ -97,7 +73,8 @@ void MiniDesignClient::deplacerPoint()
 
     if (iss >> newX >> newY) 
     {
-        auto itPoint = std::find(points.begin(), points.end(), [&](const std::shared_ptr<Point>& point){return point->id == idPoint;});
+        auto itPoint = std::find_if(points.begin(), points.end(), 
+        [&](const std::shared_ptr<Point>& p){ return p->id == idPoint; });
         
         if(itPoint != points.end())
         {
@@ -134,6 +111,19 @@ void MiniDesignClient::supprimerPoint()
 
     points.erase(it);
 }
+
+void MiniDesignClient::choisirAffichageGrille(const std::string& cmd)
+{
+    if (cmd == "o1")
+    {
+        affichageGrille = std::make_unique<AffichageGrilleTexture>(points, nuages);
+    }
+    else
+    {
+        affichageGrille = std::make_unique<AffichageGrilleID>(points, nuages);
+    }
+}
+
 
 void MiniDesignClient::setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation)
 {
