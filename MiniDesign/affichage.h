@@ -23,7 +23,7 @@ class NuageDePoints
 {
 public:
     void relierPoints(std::vector<std::vector<char>>& grille);
-    NuageDePoints(const std::vector<std::shared_ptr<Point>>& points);
+    NuageDePoints(const std::vector<std::shared_ptr<Point>>& points, char texture);
     void setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface);
     friend std::ostream& operator<<(std::ostream& os, const NuageDePoints& nuageDePoints);
     char getTexture() const;

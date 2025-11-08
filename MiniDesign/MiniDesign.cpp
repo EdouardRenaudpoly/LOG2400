@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     
     // Ce sont différentes textures possibles. Seules les 2 premières sont utilisées dans les scénarios du TP.
     vector<char> texturesNuages = {'o', '#', '$'};
+    int currentId = 0;
     string cmd;
     
     // Menu
@@ -50,7 +51,8 @@ int main(int argc, char* argv[]) {
         if (cmd == "q") break;
         if(cmd == "f")
         {
-            miniDesignClient.creerNuage();
+            miniDesignClient.creerNuage(texturesNuages[currentId]);
+            currentId++;
         }
         if(cmd == "d")
         {

@@ -8,13 +8,13 @@
 class AffichageGrille {
 protected:
 
-    std::vector<NuageDePoints> nuages;
+    std::vector<std::shared_ptr<NuageDePoints>> nuages;
     std::vector<std::shared_ptr<Point>> points;
 
     virtual void afficherPoints(std::vector<std::vector<char>>& grille) = 0;
 
 public:
-    AffichageGrille(const std::vector<NuageDePoints>& nuages,
+    AffichageGrille(const std::vector<std::shared_ptr<NuageDePoints>>& nuages,
                     const std::vector<std::shared_ptr<Point>>& points);
 
     virtual ~AffichageGrille() = default;

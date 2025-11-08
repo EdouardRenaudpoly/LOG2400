@@ -38,6 +38,7 @@ vector<shared_ptr<Point>> PointFactory::creerPoints(const string& ligne) {
     // On crée un flux de lecture (istringstream) à partir de la chaîne ligne.
     istringstream iss(ligne);
     string token;
+    int currentID = 0;
     // On lit chaque point de la ligne (séparé par des espaces).
     while (iss >> token) {
         // On vérifie que le point est entre parenthèses
@@ -52,6 +53,7 @@ vector<shared_ptr<Point>> PointFactory::creerPoints(const string& ligne) {
             // On ajoute un point {x, y} au vecteur de points.
             if (pair >> x >> y) {
                 Point p {x,y};
+                p.id = currentID++;
                 points.push_back(make_shared<Point>(p));
             }
         }
@@ -61,12 +63,16 @@ vector<shared_ptr<Point>> PointFactory::creerPoints(const string& ligne) {
 
 void NuageDePoints::relierPoints(vector<vector<char>>& grille)
 {
-    stratSurface->relierPoints(grille, points);
+    if(stratSurface)
+    {
+        stratSurface->relierPoints(grille, points);
+    }   
 }
 
-NuageDePoints::NuageDePoints(const std::vector<std::shared_ptr<Point>> &points)
+NuageDePoints::NuageDePoints(const std::vector<std::shared_ptr<Point>> &points, char texture)
 {
     this->points = points;
+    this->texture = texture;
 }
 
 void NuageDePoints::setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface)

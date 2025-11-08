@@ -12,11 +12,7 @@ public:
     {
         affichageGrille = std::move(affichage);
     }
-    void afficherGrille()
-    {
-        if (affichageGrille)
-            affichageGrille->afficherGrille();
-    }
+    void afficherGrille();
 
     void choisirAffichageGrille(const std::string& cmd);
 
@@ -24,9 +20,9 @@ public:
     void deplacerPoint();
     void supprimerPoint();
     void setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation);
-    void creerNuage();
+    void creerNuage(char texture);
 private:
     std::vector<std::shared_ptr<Point>> points;
-    std::vector<NuageDePoints> nuages;
+    std::vector<std::shared_ptr<NuageDePoints>> nuages;
     std::unique_ptr<AffichageGrille> affichageGrille;
 };
