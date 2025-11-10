@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
         }
         if(cmd == "c1")
         {
-            auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
+            auto stratSurface = make_shared<StrategieSurfaceOrdreID>();
             miniDesignClient.setStrategieCreationSurface(stratSurface);
         }
         if(cmd == "c2")
