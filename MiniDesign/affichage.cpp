@@ -123,3 +123,33 @@ std::ostream& operator<<(std::ostream &os, const Point &p)
     os << "(" << p.x << ", " << p.y << ")";
     return os;
 }
+
+
+
+std::string Point::getTextures() const
+{
+    return "";
+}
+
+DecorateurPoint::DecorateurPoint(std::unique_ptr<IAffichablePoint> composant)
+    : composant(std::move(composant)) {}
+
+
+DecorateurTexture::DecorateurTexture(std::unique_ptr<IAffichablePoint> composant, char texture) : DecorateurPoint(std::move(composant))
+{
+    this->texture = texture;
+}
+
+std::string DecorateurTexture::getTextures() const
+{
+    return std::string(1, texture) + composant->getTextures();
+}
+
+std::shared_ptr<Point> getPointDeBase(std::shared_ptr<IAffichablePoint> p) 
+{
+    auto decorateur = std::dynamic_pointer_cast<DecorateurPoint>(p);
+    if (decorateur)
+        return getPointDeBase(decorateur->composant);
+    return std::dynamic_pointer_cast<Point>(p);
+}
+

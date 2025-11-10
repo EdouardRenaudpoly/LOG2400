@@ -12,9 +12,13 @@ public:
     std::vector<std::shared_ptr<Point>> creerPoints(const std::string& ligne);
 };
 
-struct Point {
+class Point : public IAffichablePoint
+{
+public:
+    Point(int x, int y) : x(x), y(y){}
     int x, y;
     int id;
+    std::string getTextures() const override;
 };
 
 std::ostream& operator<<(std::ostream& os, const Point& p);
@@ -36,3 +40,30 @@ private:
 };
 
 void tracerLigne(std::vector<std::vector<char>>& grille, int x0, int y0, int x1, int y1);
+
+#pragma once
+#include <memory>
+#include <string>
+
+// AbstractComponent
+class IAffichablePoint {
+public:
+    virtual ~IAffichablePoint() = default;
+    virtual std::string getTextures() const = 0;
+};
+
+// AbstractDecorator
+class DecorateurPoint : public IAffichablePoint {
+protected:
+    std::unique_ptr<IAffichablePoint> composant;
+public:
+    DecorateurPoint(std::unique_ptr<IAffichablePoint> composant);
+};
+
+// ConcreteDecorator pour les textures
+class DecorateurTexture : public DecorateurPoint {
+    char texture;
+public:
+    DecorateurTexture(std::unique_ptr<IAffichablePoint> composant, char texture);
+    std::string getTextures() const override;
+};
