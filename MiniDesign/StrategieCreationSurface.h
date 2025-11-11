@@ -5,21 +5,22 @@
 #include <vector>
 #include <memory>
 
+struct IAffichablePoint;
 struct Point;
 
 class StrategieCreationSurface{
 public:
-    virtual void relierPoints(std::vector<std::vector<char>>& grille, std::vector<std::shared_ptr<Point>>& points) = 0;
+    virtual void relierPoints(std::vector<std::vector<char>>& grille, std::vector<std::shared_ptr<IAffichablePoint>>& points) = 0;
 };
 
 class StrategieSurfaceOrdreID : public StrategieCreationSurface{
 public:
-    void relierPoints(std::vector<std::vector<char>>& grille, std::vector<std::shared_ptr<Point>>& points) override;
+    void relierPoints(std::vector<std::vector<char>>& grille, std::vector<std::shared_ptr<IAffichablePoint>>& points) override;
 };
 
 class StrategieSurfaceDistanceMin : public StrategieCreationSurface{
 public:
-    void relierPoints(std::vector<std::vector<char>>& grille, std::vector<std::shared_ptr<Point>>& points) override;
+    void relierPoints(std::vector<std::vector<char>>& grille, std::vector<std::shared_ptr<IAffichablePoint>>& points) override;
 };
 
 #endif

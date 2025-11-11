@@ -5,7 +5,7 @@
 
 class MiniDesignClient{
 public:
-    MiniDesignClient(const std::vector<std::shared_ptr<Point>>& points)
+    MiniDesignClient(const std::vector<std::shared_ptr<IAffichablePoint>>& points)
     : points(points) {}
 
     void setAffichageGrille(std::unique_ptr<AffichageGrille> affichage)
@@ -22,7 +22,7 @@ public:
     void setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation);
     void creerNuage(char texture);
 private:
-    std::vector<std::shared_ptr<Point>> points;
+    std::vector<std::shared_ptr<IAffichablePoint>> points;
     std::vector<std::shared_ptr<NuageDePoints>> nuages;
     std::unique_ptr<AffichageGrille> affichageGrille;
 };

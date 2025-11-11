@@ -9,17 +9,8 @@ void MiniDesignClient::afficherListeEtNuages()
 {
     for(auto&& point : points)
     {
-        char texture = '\0';
-        for(auto&& nuage : nuages)
-        {
-            if(nuage->contientPoint(point->id))
-            {
-                texture = nuage->getTexture();
-                break;
-            }
-        }
-
-        std::cout << point->id << ": " << *point << " textures: '" << texture << "'" << std::endl;
+        std::string textures = point->getTextures();
+        std::cout << point->getPointDeBase()->id << ": " << *(point->getPointDeBase()) << " textures: '" << textures << "'" << std::endl;
     }
 
     for(int i = 0; i < nuages.size(); i++)
@@ -30,7 +21,7 @@ void MiniDesignClient::afficherListeEtNuages()
 
 void MiniDesignClient::creerNuage(char texture)
 {
-    std::vector<std::shared_ptr<Point>> pointsNuage;
+    std::vector<std::shared_ptr<IAffichablePoint>> pointsNuage;
 
     std::cout << "IDs des points à fusionner dans un nuage (ex: 0 2 4): ";
     std::string line;
@@ -43,10 +34,11 @@ void MiniDesignClient::creerNuage(char texture)
     while (iss >> idRecherche)
     {
         auto itPoint = std::find_if(points.begin(), points.end(),
-            [&](const std::shared_ptr<Point>& p){ return p->id == idRecherche; });
+            [&](const std::shared_ptr<IAffichablePoint>& p){ return p->getPointDeBase()->id == idRecherche; });
 
         if (itPoint != points.end())
         {
+            *itPoint = std::make_shared<DecorateurTexture>(*itPoint, texture);
             pointsNuage.push_back(*itPoint);
         }
         else
@@ -79,12 +71,12 @@ void MiniDesignClient::deplacerPoint()
     if (std::cin >> newX >> newY)
     {
         auto itPoint = std::find_if(points.begin(), points.end(),
-            [&](const std::shared_ptr<Point>& p){ return p->id == idPoint; });
+            [&](const std::shared_ptr<IAffichablePoint>& p){ return p->getPointDeBase()->id == idPoint; });
         
         if (itPoint != points.end())
         {
-            (*itPoint)->x = newX;
-            (*itPoint)->y = newY;
+            (*itPoint)->getPointDeBase()->x = newX;
+            (*itPoint)->getPointDeBase()->y = newY;
         }
         else
         {
@@ -104,10 +96,10 @@ void MiniDesignClient::supprimerPoint()
     std::cin >> idPoint;
 
     auto it = std::find_if(points.begin(), points.end(),
-        [&](const std::shared_ptr<Point>& p){ return p->id == idPoint; });
+        [&](const std::shared_ptr<IAffichablePoint>& p){ return p->getPointDeBase()->id == idPoint; });
     if (it == points.end()) return;
 
-    std::shared_ptr<Point> pointASupprimer = *it;
+    std::shared_ptr<IAffichablePoint> pointASupprimer = *it;
 
     for (auto& nuage : nuages) 
     {

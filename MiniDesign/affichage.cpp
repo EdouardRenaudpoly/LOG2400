@@ -33,8 +33,8 @@ void tracerLigne(vector<vector<char>> &grille, int x0, int y0, int x1, int y1)
     }
 }
 
-vector<shared_ptr<Point>> PointFactory::creerPoints(const string& ligne) {
-    vector<shared_ptr<Point>> points;
+vector<shared_ptr<IAffichablePoint>> PointFactory::creerPoints(const string& ligne) {
+    vector<shared_ptr<IAffichablePoint>> points;
     // On crée un flux de lecture (istringstream) à partir de la chaîne ligne.
     istringstream iss(ligne);
     string token;
@@ -58,6 +58,7 @@ vector<shared_ptr<Point>> PointFactory::creerPoints(const string& ligne) {
             }
         }
     }
+
     return points;
 }
 
@@ -69,7 +70,7 @@ void NuageDePoints::relierPoints(vector<vector<char>>& grille)
     }   
 }
 
-NuageDePoints::NuageDePoints(const std::vector<std::shared_ptr<Point>> &points, char texture)
+NuageDePoints::NuageDePoints(const std::vector<std::shared_ptr<IAffichablePoint>> &points, char texture)
 {
     this->points = points;
     this->texture = texture;
@@ -88,7 +89,7 @@ char NuageDePoints::getTexture() const
 bool NuageDePoints::contientPoint(int idPoint) const
 {
     for (const auto& p : points) {
-        if (p->id == idPoint)
+        if (p->getPointDeBase()->id == idPoint)
             return true;
     }
     return false;
@@ -97,8 +98,8 @@ bool NuageDePoints::contientPoint(int idPoint) const
 void NuageDePoints::supprimerPoint(int idPoint) {
     points.erase(
         std::remove_if(points.begin(), points.end(),
-            [&](const std::shared_ptr<Point>& point) {
-                return point->id == idPoint;
+            [&](const std::shared_ptr<IAffichablePoint>& point) {
+                return point->getPointDeBase()->id == idPoint;
             }),
         points.end()
     );
@@ -111,7 +112,7 @@ std::ostream &operator<<(std::ostream& os, const NuageDePoints& nuageDePoints)
 
     for(auto&& point: nuageDePoints.points)
     {
-        cout << " " << point->id;
+        cout << " " << point->getPointDeBase()->id;
     }
 
     std::cout << endl;
@@ -131,25 +132,17 @@ std::string Point::getTextures() const
     return "";
 }
 
-DecorateurPoint::DecorateurPoint(std::unique_ptr<IAffichablePoint> composant)
-    : composant(std::move(composant)) {}
+DecorateurPoint::DecorateurPoint(std::shared_ptr<IAffichablePoint> composant)
+    : composant(composant) {}
 
 
-DecorateurTexture::DecorateurTexture(std::unique_ptr<IAffichablePoint> composant, char texture) : DecorateurPoint(std::move(composant))
+DecorateurTexture::DecorateurTexture(std::shared_ptr<IAffichablePoint> composant, char texture) : DecorateurPoint(composant)
 {
     this->texture = texture;
 }
 
 std::string DecorateurTexture::getTextures() const
 {
-    return std::string(1, texture) + composant->getTextures();
-}
-
-std::shared_ptr<Point> getPointDeBase(std::shared_ptr<IAffichablePoint> p) 
-{
-    auto decorateur = std::dynamic_pointer_cast<DecorateurPoint>(p);
-    if (decorateur)
-        return getPointDeBase(decorateur->composant);
-    return std::dynamic_pointer_cast<Point>(p);
+    return composant->getTextures() + std::string(1, texture);
 }
 

@@ -5,22 +5,28 @@ using namespace std;
 
 void AffichageGrilleTexture::afficherPoints(std::vector<std::vector<char>>& grille)
 {
-    for(auto&& point : points)
+    for (auto&& pAffichable : points) 
     {
-        int nTextures = 0;
-        
-        for(auto&& nuage : nuages)
-        {
-            if(nuage->contientPoint(point->id))
-            {
-                grille[point->y][point->x+nTextures] = nuage->getTexture();
-                nTextures++;
-            }
-        }
+        auto pBase = pAffichable->getPointDeBase();
+        if (!pBase) continue;
 
-        if(nTextures == 0)
+        std::string textures = pAffichable->getTextures(); // Appel direct sur l'interface
+
+        if (textures.empty()) 
         {
-            grille[point->y][point->x+nTextures] = '.';
+            grille[pBase->y][pBase->x] = '.';
+        } 
+        else 
+        {
+            for (int i = 0; i < static_cast<int>(textures.size()); ++i) 
+            {
+                
+                int x = pBase->x + i;
+                if (x >= 0 && x < LARGEUR && pBase->y >= 0 && pBase->y < HAUTEUR)
+                {
+                    grille[pBase->y][x] = textures[i];
+                }
+            }
         }
     }
 }
@@ -28,10 +34,10 @@ void AffichageGrilleTexture::afficherPoints(std::vector<std::vector<char>>& gril
 void AffichageGrilleID::afficherPoints(std::vector<std::vector<char>>& grille)
 {
     for (auto&& point : points)
-        grille[point->y][point->x] = '0' + (point->id % 10);
+        grille[point->getPointDeBase()->y][point->getPointDeBase()->x] = '0' + (point->getPointDeBase()->id % 10);
 }
 
-AffichageGrille::AffichageGrille(const std::vector<std::shared_ptr<NuageDePoints>>& nuages, const std::vector<std::shared_ptr<Point>> &points)
+AffichageGrille::AffichageGrille(const std::vector<std::shared_ptr<NuageDePoints>>& nuages, const std::vector<std::shared_ptr<IAffichablePoint>> &points)
 {
     this->nuages = nuages;
     this->points = points;
