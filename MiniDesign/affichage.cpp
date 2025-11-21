@@ -64,62 +64,154 @@ vector<shared_ptr<IAffichablePoint>> PointFactory::creerPoints(const string& lig
 
 void NuageDePoints::relierPoints(vector<vector<char>>& grille)
 {
+    vector<shared_ptr<IAffichablePoint>> points;
     if(stratSurface)
     {
-        stratSurface->relierPoints(grille, points);
+        stratSurface->relierPoints(grille, getPoints(points));
     }   
 }
 
-NuageDePoints::NuageDePoints(const std::vector<std::shared_ptr<IAffichablePoint>> &points, char texture)
+NuageDePoints::NuageDePoints(const vector<shared_ptr<ComposanteAffichageAbs>> &points, char texture)
 {
     this->points = points;
     this->texture = texture;
 }
 
-void NuageDePoints::setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratSurface)
+void NuageDePoints::setStrategieCreationSurface(const shared_ptr<StrategieCreationSurface>& stratSurface)
 {
     this->stratSurface = stratSurface;
 }
 
-char NuageDePoints::getTexture() const
+string NuageDePoints::getTextures() const
 {
-    return texture;
+    return string(1,texture);
 }
 
 bool NuageDePoints::contientPoint(int idPoint) const
 {
     for (const auto& p : points) {
-        if (p->getPointDeBase()->id == idPoint)
+        if(typeid(*p) == typeid(IAffichablePoint) )
+        {
+            auto point = dynamic_pointer_cast<IAffichablePoint>(p);
+            if (point->getPointDeBase()->id == idPoint)
             return true;
+        }
+        else if(typeid(*p) == typeid(NuageDePoints) )
+        {
+            auto nuage = dynamic_pointer_cast<NuageDePoints>(p);
+            if(nuage && nuage->contientPoint(idPoint))
+                return true;
+        }
     }
     return false;
 }
 
 void NuageDePoints::supprimerPoint(int idPoint) {
     points.erase(
-        std::remove_if(points.begin(), points.end(),
-            [&](const std::shared_ptr<IAffichablePoint>& point) {
-                return point->getPointDeBase()->id == idPoint;
+        remove_if(points.begin(), points.end(),
+            [&](const shared_ptr<ComposanteAffichageAbs>& point) {
+                if(typeid(*point) == typeid(NuageDePoints))
+                {
+                    auto nuage = dynamic_pointer_cast<NuageDePoints>(point);
+                    if(nuage)
+                    {
+                        nuage->supprimerPoint(idPoint);
+                        // Si le nuage ne contient plus de points, on le supprime aussi
+                        vector<shared_ptr<IAffichablePoint>> pts;
+                        nuage->getPoints(pts);
+                        if(pts.empty())
+                            return true;
+                    }
+                    return false;
+                }
+                auto ipoint = dynamic_pointer_cast<IAffichablePoint>(point);
+                return ipoint->getPointDeBase()->id == idPoint;
             }),
         points.end()
     );
 }
 
-
-std::ostream &operator<<(std::ostream& os, const NuageDePoints& nuageDePoints)
+vector<shared_ptr<IAffichablePoint>>& NuageDePoints::getPoints(vector<shared_ptr<IAffichablePoint>>& vecRec) const
 {
-    std::cout << "Nuage '" << nuageDePoints.texture << "' contient les points:";
-
-    for(auto&& point: nuageDePoints.points)
+    
+    for(auto&& p: points)
     {
-        cout << " " << point->getPointDeBase()->id;
+        if(typeid(*p) == typeid(NuageDePoints))
+        {
+            auto nuage = dynamic_pointer_cast<NuageDePoints>(p);
+            if(nuage)
+            {
+                nuage->getPoints(vecRec);
+            }
+        }
+        else
+        {
+            auto ipoint = dynamic_pointer_cast<IAffichablePoint>(p);
+            if(ipoint)
+            {
+                vecRec.push_back(ipoint);
+            }
+        }
+    }
+}
+
+void NuageDePoints::ajouterComposant(const shared_ptr<ComposanteAffichageAbs>& element)
+{
+    if(typeid(*element) == typeid(NuageDePoints))
+    {
+       auto nuage = dynamic_pointer_cast<NuageDePoints>(element);
+       if(nuage) 
+       {
+            vector<shared_ptr<IAffichablePoint>> pts;
+            pts = nuage->getPoints(pts);
+            for(auto&& p: pts)
+            {
+               p = make_shared<DecorateurTexture>(p, this->texture);
+            }  
+            points.push_back(nuage);
+       }  
+       
+    }
+    else
+    {
+        auto ipoint = dynamic_pointer_cast<IAffichablePoint>(element);
+        if(ipoint)
+        {
+            ipoint = make_shared<DecorateurTexture>(ipoint, this->texture);
+            points.push_back(ipoint);
+        }
+    }
+   
+}
+
+
+
+
+ostream &operator<<(ostream& os, const NuageDePoints& nuageDePoints)
+{
+    cout << "Nuage '" << nuageDePoints.texture << "' contient les points:";
+
+    for(auto&& p: nuageDePoints.points)
+    {
+        if(typeid(*p) == typeid(IAffichablePoint))
+        {
+            auto point = dynamic_pointer_cast<IAffichablePoint>(p);
+            cout << " " << point->getPointDeBase()->id;
+        }
+            
+        if(typeid(*p) == typeid(NuageDePoints))
+        {
+            auto nuage = dynamic_pointer_cast<NuageDePoints>(p);
+            if(nuage)
+                cout << "\n" << *nuage;
+        }
     }
 
-    std::cout << endl;
+    cout << endl;
     return os;
 }
 
-std::ostream& operator<<(std::ostream &os, const Point &p)
+ostream& operator<<(ostream &os, const Point &p)
 {
     os << "(" << p.x << ", " << p.y << ")";
     return os;
@@ -127,22 +219,22 @@ std::ostream& operator<<(std::ostream &os, const Point &p)
 
 
 
-std::string Point::getTextures() const
+string Point::getTextures() const
 {
     return "";
 }
 
-DecorateurPoint::DecorateurPoint(std::shared_ptr<IAffichablePoint> composant)
+DecorateurPoint::DecorateurPoint(shared_ptr<IAffichablePoint> composant)
     : composant(composant) {}
 
 
-DecorateurTexture::DecorateurTexture(std::shared_ptr<IAffichablePoint> composant, char texture) : DecorateurPoint(composant)
+DecorateurTexture::DecorateurTexture(shared_ptr<IAffichablePoint> composant, char texture) : DecorateurPoint(composant)
 {
     this->texture = texture;
 }
 
-std::string DecorateurTexture::getTextures() const
+string DecorateurTexture::getTextures() const
 {
-    return composant->getTextures() + std::string(1, texture);
+    return composant->getTextures() + texture;
 }
 
