@@ -2,13 +2,30 @@
 using namespace std;
 
 void Executeur::executerCommande(const shared_ptr<Commande>& cmd) {
-    cmd->executer("cmd");
-    historique.push(cmd);
+    cmd->executer();
 }
 void Executeur::annulerDerniereCommande() {
-    if (!historique.empty()) {
-        shared_ptr<Commande> cmd = historique.top();
+    if (!undoStack.empty()) {
+        shared_ptr<Commande> cmd = undoStack.top();
         cmd->annuler();
-        historique.pop();
+        undoStack.pop();
+        redoStack.push(cmd);
+    }
+}
+
+void Executeur::executerEtSauvergarder(const shared_ptr<Commande>& cmd)
+{
+    this->executerCommande(cmd);
+    undoStack.push(cmd);
+    redoStack = stack<shared_ptr<Commande>>();
+}
+
+void Executeur::reexecuterCommande()
+{
+    if(!redoStack.empty()){
+        shared_ptr<Commande> cmd = redoStack.top();
+        cmd->executer();
+        redoStack.pop();
+        undoStack.push(cmd);
     }
 }

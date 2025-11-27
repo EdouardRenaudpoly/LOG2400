@@ -1,9 +1,10 @@
 #ifndef STRATEGIE_CREATION_SURFACE_H
 #define STRATEGIE_CREATION_SURFACE_H
-
+#pragma once
 #include <iostream>
 #include <vector>
 #include <memory>
+
 
 struct IAffichablePoint;
 struct Point;

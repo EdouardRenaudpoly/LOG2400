@@ -15,9 +15,15 @@ public:
     virtual std::string getTextures() const = 0;
     virtual void ajouterComposant(const std::shared_ptr<ComposanteAffichageAbs> &element) = 0;
     virtual void supprimerPoint(int idPoint) = 0;
+    void setId(int newId) { id = newId; }
+    int getId() const { return id; }
 
+protected:
+    int id;
 private:
     char texture;
+
+
 };
 
 // AbstractComponent
@@ -67,7 +73,6 @@ class Point : public IAffichablePoint, public std::enable_shared_from_this<Point
 public:
     Point(int x, int y) : x(x), y(y) {}
     int x, y;
-    int id;
     std::string getTextures() const override;
     std::shared_ptr<Point> getPointDeBase() override { return shared_from_this(); }
     void ajouterComposant(const std::shared_ptr<ComposanteAffichageAbs> &element) override {}

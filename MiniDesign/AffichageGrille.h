@@ -1,9 +1,10 @@
 #ifndef AFFICHAGE_GRILLE_H
 #define AFFICHAGE_GRILLE_H
-
+#pragma once
 #include <vector>
 #include <memory>
 #include "affichage.h"
+
 
 class AffichageGrille {
 protected:

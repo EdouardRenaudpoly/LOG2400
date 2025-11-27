@@ -53,7 +53,7 @@ vector<shared_ptr<IAffichablePoint>> PointFactory::creerPoints(const string& lig
             // On ajoute un point {x, y} au vecteur de points.
             if (pair >> x >> y) {
                 Point p {x,y};
-                p.id = currentID++;
+                p.setId( currentID++) ;
                 points.push_back(make_shared<Point>(p));
             }
         }
@@ -93,7 +93,7 @@ bool NuageDePoints::contientPoint(int idPoint) const
         if(typeid(*p) == typeid(IAffichablePoint) )
         {
             auto point = dynamic_pointer_cast<IAffichablePoint>(p);
-            if (point->getPointDeBase()->id == idPoint)
+            if (point->getPointDeBase()->getId() == idPoint)
             return true;
         }
         else if(typeid(*p) == typeid(NuageDePoints) )
@@ -125,7 +125,7 @@ void NuageDePoints::supprimerPoint(int idPoint) {
                     return false;
                 }
                 auto ipoint = dynamic_pointer_cast<IAffichablePoint>(point);
-                return ipoint->getPointDeBase()->id == idPoint;
+                return ipoint->getPointDeBase()->getId() == idPoint;
             }),
         points.end()
     );
@@ -196,7 +196,7 @@ ostream &operator<<(ostream& os, const NuageDePoints& nuageDePoints)
         if(typeid(*p) == typeid(IAffichablePoint))
         {
             auto point = dynamic_pointer_cast<IAffichablePoint>(p);
-            cout << " " << point->getPointDeBase()->id;
+            cout << " " << point->getPointDeBase()->getId();
         }
             
         if(typeid(*p) == typeid(NuageDePoints))

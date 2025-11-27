@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include "MiniDesignClient.h"
+#include "Executeur.h"
+#include "Commande.h"
 
 using namespace std;
 
@@ -23,11 +25,10 @@ int main(int argc, char* argv[]) {
     // TODO: Il faudrait les placer dans des classes appropriées.
 
     PointFactory pointFactory;
-    MiniDesignClient miniDesignClient = MiniDesignClient(pointFactory.creerPoints(args));
-    
-    // Ce sont différentes textures possibles. Seules les 2 premières sont utilisées dans les scénarios du TP.
-    vector<char> texturesNuages = {'o', '#', '$'};
-    int currentId = 0;
+    shared_ptr<MiniDesignClient> receveur = make_shared<MiniDesignClient>(pointFactory.creerPoints(args));
+    Executeur executeur;
+  
+   
     string cmd;
     
     // Menu
@@ -46,37 +47,53 @@ int main(int argc, char* argv[]) {
         
         if(cmd == "a")
         {
-            miniDesignClient.afficherListeEtNuages();
+            shared_ptr<Commande> cmdAfficher = make_shared<CommandeAfficherListeEtNuages>(receveur);
+            executeur.executerEtSauvergarder(cmdAfficher);
         }
         if (cmd == "q") break;
         if(cmd == "f")
         {
-            miniDesignClient.creerNuage(texturesNuages[currentId]);
-            currentId++;
+            shared_ptr<Commande> cmdCreerNuage = make_shared<CommandeCreerNuage>(receveur);
+            executeur.executerEtSauvergarder(cmdCreerNuage);
         }
         if(cmd == "d")
         {
-            miniDesignClient.deplacerPoint();
+            shared_ptr<Commande> cmdDeplacerPoint = make_shared<CommandeDeplacerPoint>(receveur);
+            executeur.executerEtSauvergarder(cmdDeplacerPoint);
         }
         if(cmd == "s")
         {
-            miniDesignClient.supprimerPoint();
+            shared_ptr<Commande> cmdSupprimerPoint = make_shared<CommandeSupprimerPoint>(receveur);
+            executeur.executerEtSauvergarder(cmdSupprimerPoint);
         }
         if(cmd == "c1")
         {
-            auto stratSurface = make_shared<StrategieSurfaceOrdreID>();
-            miniDesignClient.setStrategieCreationSurface(stratSurface);
+            shared_ptr<Commande> cmdCreerSurface = make_shared<CommandeCreerSurfaceOrdreID>(receveur);
+            executeur.executerEtSauvergarder(cmdCreerSurface);
         }
         if(cmd == "c2")
         {
-            auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
-            miniDesignClient.setStrategieCreationSurface(stratSurface);
+            shared_ptr<Commande> cmdCreerSurface = make_shared<CommandeCreerSurfaceDistanceMin>(receveur);
+            executeur.executerEtSauvergarder(cmdCreerSurface);
         }
-        if (cmd == "o1" || cmd == "o2")
+        if (cmd == "o1")
         {
-            miniDesignClient.choisirAffichageGrille(cmd);
-            miniDesignClient.afficherGrille();
+            shared_ptr<Commande> cmdAffichageTexture = make_shared<CommandeAffichageTexture>(receveur);
+            executeur.executerEtSauvergarder(cmdAffichageTexture);
         }
+        if(cmd == "o2")
+        {
+            
+        }
+        if(cmd == "r")
+        {
+            executeur.reexecuterCommande();
+        }
+        if(cmd == "u")
+        {
+            executeur.annulerDerniereCommande();
+        }
+
     }
 
     return 0;

@@ -34,7 +34,7 @@ void AffichageGrilleTexture::afficherPoints(std::vector<std::vector<char>>& gril
 void AffichageGrilleID::afficherPoints(std::vector<std::vector<char>>& grille)
 {
     for (auto&& point : points)
-        grille[point->getPointDeBase()->y][point->getPointDeBase()->x] = '0' + (point->getPointDeBase()->id % 10);
+        grille[point->getPointDeBase()->y][point->getPointDeBase()->x] = '0' + (point->getPointDeBase()->getId() % 10);
 }
 
 AffichageGrille::AffichageGrille(const std::vector<std::shared_ptr<NuageDePoints>>& nuages, const std::vector<std::shared_ptr<IAffichablePoint>> &points)

@@ -15,7 +15,7 @@ void StrategieSurfaceOrdreID::relierPoints(std::vector<std::vector<char>>& grill
     std::sort(pts.begin(), pts.end(), [](const auto& a, const auto& b) {
         auto pa = a->getPointDeBase();
         auto pb = b->getPointDeBase();
-        return pa->id < pb->id;
+        return pa->getId() < pb->getId();
     });
 
     int size = static_cast<int>(pts.size());

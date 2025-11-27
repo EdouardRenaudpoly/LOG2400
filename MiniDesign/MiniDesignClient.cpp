@@ -7,20 +7,39 @@ using namespace std;
 
 void MiniDesignClient::afficherListeEtNuages()
 {
-    for (auto &&point : points)
+    for (auto &&element : elements)
     {
-        std::string textures = point->getTextures();
-        std::cout << point->getPointDeBase()->id << ": " << *(point->getPointDeBase()) << " textures: '" << textures << "'" << std::endl;
+        if (typeid(*element) == typeid(NuageDePoints))
+        {
+            auto nuage = dynamic_pointer_cast<NuageDePoints>(element);
+            if (nuage)
+            {
+                std::cout << "Nuage ID " << nuage->getId() << " avec texture '" << nuage->getTextures() << "' contenant les points :" << std::endl;
+    
+            }
+        }
+        else
+        {
+            auto point = dynamic_pointer_cast<IAffichablePoint>(element);
+            if (point)
+            {
+                std::string textures = point->getTextures();
+                std::cout << "Point ID " << point->getPointDeBase()->getId() << ": " << *(point->getPointDeBase()) << " textures: '" << textures << "'" << std::endl;
+            }
+        }
     }
 
-    for (int i = 0; i < nuages.size(); i++)
-    {
-        std::cout << *nuages[i];
-    }
+   
 }
 
-void MiniDesignClient::creerNuage(char texture)
+void MiniDesignClient::creerNuage()
 {
+    if(nuages.size() == texturesNuages.size())
+    {
+        cout << "Nombre maximal de nuages atteint";
+        return;
+    }
+    
     std::vector<std::shared_ptr<IAffichablePoint>> pointsNuage;
 
     std::cout << "IDs des points à fusionner dans un nuage (ex: 0 2 4): ";
@@ -35,11 +54,11 @@ void MiniDesignClient::creerNuage(char texture)
     {
         auto itPoint = std::find_if(points.begin(), points.end(),
                                     [&](const std::shared_ptr<IAffichablePoint> &p)
-                                    { return p->getPointDeBase()->id == idRecherche; });
+                                    { return p->getPointDeBase()->getId() == idRecherche; });
 
         if (itPoint != points.end())
         {
-            *itPoint = std::make_shared<DecorateurTexture>(*itPoint, texture);
+            *itPoint = std::make_shared<DecorateurTexture>(*itPoint,texturesNuages[nuages.size()] );
             pointsNuage.push_back(*itPoint);
         }
         else
@@ -58,7 +77,7 @@ void MiniDesignClient::creerNuage(char texture)
             converted.push_back(p); // Works if IAffichablePoint inherits ComposanteAffichageAbs
         }
 
-        nuages.push_back(std::make_shared<NuageDePoints>(converted, texture));
+        nuages.push_back(std::make_shared<NuageDePoints>(converted, texturesNuages[nuages.size()]));
         std::cout << "Nuage créé avec " << pointsNuage.size() << " points." << std::endl;
     }
     else if (pointsNuage.empty())
@@ -80,7 +99,7 @@ void MiniDesignClient::deplacerPoint()
     {
         auto itPoint = std::find_if(points.begin(), points.end(),
                                     [&](const std::shared_ptr<IAffichablePoint> &p)
-                                    { return p->getPointDeBase()->id == idPoint; });
+                                    { return p->getPointDeBase()->getId() == idPoint; });
 
         if (itPoint != points.end())
         {
@@ -106,7 +125,7 @@ void MiniDesignClient::supprimerPoint()
 
     auto it = std::find_if(points.begin(), points.end(),
                            [&](const std::shared_ptr<IAffichablePoint> &p)
-                           { return p->getPointDeBase()->id == idPoint; });
+                           { return p->getPointDeBase()->getId() == idPoint; });
     if (it == points.end())
         return;
 
@@ -128,16 +147,17 @@ void MiniDesignClient::afficherGrille()
     }
 }
 
-void MiniDesignClient::choisirAffichageGrille(const std::string &cmd)
+void MiniDesignClient::choisirAffichageGrilleTexture()
 {
-    if (cmd == "o1")
-    {
-        affichageGrille = std::make_unique<AffichageGrilleTexture>(nuages, points);
-    }
-    else
-    {
-        affichageGrille = std::make_unique<AffichageGrilleID>(nuages, points);
-    }
+    
+    affichageGrille = std::make_unique<AffichageGrilleTexture>(nuages, points);
+    this->afficherGrille();
+}
+
+void MiniDesignClient::choisirAffichageGrilleID()
+{
+    affichageGrille = std::make_unique<AffichageGrilleID>(nuages, points);
+    this->afficherGrille();
 }
 
 void MiniDesignClient::setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation)
@@ -146,4 +166,14 @@ void MiniDesignClient::setStrategieCreationSurface(std::shared_ptr<StrategieCrea
     {
         nuage->setStrategieCreationSurface(stratCreation);
     }
+}
+
+std::vector<std::shared_ptr<IAffichablePoint>> MiniDesignClient::getPoints() const
+{
+    return points;
+}
+
+std::vector<std::shared_ptr<NuageDePoints>> MiniDesignClient::getNuages() const
+{
+    return nuages;
 }
