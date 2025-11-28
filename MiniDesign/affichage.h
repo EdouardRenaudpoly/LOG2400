@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "StrategieCreationSurface.h"
 #include <memory>
+#include <algorithm>
+#include "StrategieCreationSurface.h"
 
 static constexpr int LARGEUR = 50;
 static constexpr int HAUTEUR = 20;
-
 
 class ComposanteAffichageAbs
 {
@@ -15,51 +15,19 @@ public:
     virtual std::string getTextures() const = 0;
     virtual void ajouterComposant(const std::shared_ptr<ComposanteAffichageAbs> &element) = 0;
     virtual void supprimerPoint(int idPoint) = 0;
-    void setId(int newId) { id = newId; }
-    int getId() const { return id; }
+    void  setId(int newId) { id = newId; }
+    virtual int getId() const { return id; }
 
 protected:
     int id;
-private:
-    char texture;
-
-
 };
 
-// AbstractComponent
 class IAffichablePoint : public ComposanteAffichageAbs
 {
 public:
     virtual ~IAffichablePoint() = default;
 
     virtual std::shared_ptr<Point> getPointDeBase() { return nullptr; }
-};
-
-// AbstractDecorator
-class DecorateurPoint : public IAffichablePoint
-{
-protected:
-    std::shared_ptr<IAffichablePoint> composant;
-
-public:
-    DecorateurPoint(std::shared_ptr<IAffichablePoint> composant);
-
-    std::shared_ptr<Point> getPointDeBase() override
-    {
-        return composant ? composant->getPointDeBase() : nullptr;
-    }
-};
-
-// ConcreteDecorator pour les textures
-class DecorateurTexture : public DecorateurPoint
-{
-    char texture;
-
-public:
-    DecorateurTexture(std::shared_ptr<IAffichablePoint> composant, char texture);
-    std::string getTextures() const override;
-    void ajouterComposant(const std::shared_ptr<ComposanteAffichageAbs> &element) override {}
-    void supprimerPoint(int idPoint) override {}
 };
 
 class PointFactory
@@ -79,6 +47,32 @@ public:
     void supprimerPoint(int idPoint) override {}
 };
 
+class DecorateurPoint : public IAffichablePoint
+{
+protected:
+    std::shared_ptr<IAffichablePoint> composant;
+
+public:
+    DecorateurPoint(std::shared_ptr<IAffichablePoint> composant);
+
+    std::shared_ptr<Point> getPointDeBase() override
+    {
+        return composant ? composant->getPointDeBase() : nullptr;
+    }
+    int getId() const override { return composant->getPointDeBase()->getId(); }
+};
+
+class DecorateurTexture : public DecorateurPoint
+{
+    char texture;
+
+public:
+    DecorateurTexture(std::shared_ptr<IAffichablePoint> composant, char texture);
+    std::string getTextures() const override;
+    void ajouterComposant(const std::shared_ptr<ComposanteAffichageAbs> &element) override {}
+    void supprimerPoint(int idPoint) override {}
+};
+
 std::ostream &operator<<(std::ostream &os, const Point &p);
 
 class NuageDePoints : public ComposanteAffichageAbs
@@ -92,6 +86,8 @@ public:
     bool contientPoint(int idPoint) const;
     void supprimerPoint(int idPoint) override;
     void ajouterComposant(const std::shared_ptr<ComposanteAffichageAbs> &element) override;
+    void rajouterPoint(const std::shared_ptr<ComposanteAffichageAbs> &point);
+    void trierPointsParId();
     std::vector<std::shared_ptr<IAffichablePoint>> &getPoints(std::vector<std ::shared_ptr<IAffichablePoint>> &vecRec) const;
 
 private:

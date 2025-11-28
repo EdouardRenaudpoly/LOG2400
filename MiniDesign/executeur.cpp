@@ -11,9 +11,12 @@ void Executeur::annulerDerniereCommande() {
         undoStack.pop();
         redoStack.push(cmd);
     }
+    else {
+        cout << "Aucune commande à annuler." << endl;
+    }
 }
 
-void Executeur::executerEtSauvergarder(const shared_ptr<Commande>& cmd)
+void Executeur::executerEtSauvegarder(const shared_ptr<Commande>& cmd)
 {
     this->executerCommande(cmd);
     undoStack.push(cmd);
@@ -27,5 +30,8 @@ void Executeur::reexecuterCommande()
         cmd->executer();
         redoStack.pop();
         undoStack.push(cmd);
+    }
+    else{
+        cout << "Aucune commande à réexécuter." << endl;
     }
 }

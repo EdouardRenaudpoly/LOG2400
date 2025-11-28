@@ -1,10 +1,14 @@
 #pragma once
 #include <vector>
-#include <iostream>
+#include <memory>
 #include "AffichageGrille.h"
 #include "affichage.h"
 
+class CommandeDeplacerPoint;
+class CommandeSupprimerPoint;
+class StrategieCreationSurface;
 
+// Receveur des commandes
 class MiniDesignClient
 {
 public:
@@ -26,10 +30,11 @@ public:
     void choisirAffichageGrilleTexture();
     void choisirAffichageGrilleID();
     void afficherListeEtNuages();
-    void deplacerPoint();
-    void supprimerPoint();
-    void setStrategieCreationSurface(std::shared_ptr<StrategieCreationSurface> stratCreation);
+    void deplacerPoint(const std::shared_ptr<CommandeDeplacerPoint>& cmd );
+    void supprimerPoint(const std::shared_ptr<CommandeSupprimerPoint>& cmd);
+    void setStrategieCreationSurface(const std::shared_ptr<StrategieCreationSurface>& stratCreation);
     void creerNuage();
+    void recreerPoint(std::shared_ptr<IAffichablePoint> point, std::vector<std::shared_ptr<NuageDePoints>>& nuagesContenantPoint);
 
 
 

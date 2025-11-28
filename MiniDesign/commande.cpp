@@ -1,4 +1,7 @@
 #include "commande.h"
+#include "MiniDesignClient.h"
+#include "affichage.h"
+#include "StrategieCreationSurface.h"
 #include <iostream>
 using namespace std;
 
@@ -7,55 +10,57 @@ void CommandeCreerNuage::executer()
     recepteur->creerNuage();
 }
 
-void CommandeCreerNuage::annuler()
-{
-}
+
 
 void CommandeDeplacerPoint::executer()
 {
-    recepteur->deplacerPoint();
+    
+    recepteur->deplacerPoint(shared_from_this());
 }
 
 void CommandeDeplacerPoint::annuler()
 {
-
+    recepteur->deplacerPoint(shared_from_this());
 }
 
 void CommandeSupprimerPoint::executer()
 {
-    recepteur->supprimerPoint();
+    recepteur->supprimerPoint(shared_from_this());
 }
 
 void CommandeSupprimerPoint::annuler()
 {
-    
+    recepteur->recreerPoint(pointSupprime, nuagesContenantPoint);
+    for (auto &nuage : nuagesContenantPoint)
+    {
+        nuage->rajouterPoint(pointSupprime);
+    }
+}
+
+void CommandeSupprimerPoint::setSavedData(std::shared_ptr<IAffichablePoint> point, const std::vector<std::shared_ptr<NuageDePoints>>& nuages)
+{
+    pointSupprime = point;
+    nuagesContenantPoint = nuages;
 }
 
 void CommandeAfficherListeEtNuages::executer()
 {
     recepteur->afficherListeEtNuages();
-    cout<<"affichage termine"<<endl;
 }
 
-void CommandeAfficherListeEtNuages::annuler()
-{
-}
+
 
 void CommandeAffichageTexture::executer()
 {
     recepteur->choisirAffichageGrilleTexture();
 }
-void CommandeAffichageTexture::annuler()
-{
-}
+
 
 void CommandeAffichageID::executer()
 {
     recepteur->choisirAffichageGrilleID();
 }
-void CommandeAffichageID::annuler()
-{
-}
+
 
 void CommandeCreerSurfaceOrdreID::executer()
 {
@@ -63,18 +68,12 @@ void CommandeCreerSurfaceOrdreID::executer()
     recepteur->setStrategieCreationSurface(stratSurface);
 }
 
-void CommandeCreerSurfaceOrdreID::annuler()
-{
 
-}
 
 void CommandeCreerSurfaceDistanceMin::executer()
 {
     auto stratSurface = make_shared<StrategieSurfaceDistanceMin>();
     recepteur->setStrategieCreationSurface(stratSurface);
 }
-void CommandeCreerSurfaceDistanceMin::annuler()
-{
 
-}
 

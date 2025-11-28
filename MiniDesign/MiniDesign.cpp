@@ -42,48 +42,51 @@ int main(int argc, char* argv[]) {
                   << "s  - Supprimer un point (ID)\n"
                   << "c1 - Créer les surfaces selon l'ordre des IDs\n"
                   << "c2 - Créer les surfaces selon la distance minimale\n"
+                  << "u  - Annuler la dernière commande annulable\n"
+                  << "r  - Refaire la dernière commande annulable annulée\n"
                   << "q  - Quitter\n> ";
         getline(std::cin, cmd);
         
         if(cmd == "a")
         {
             shared_ptr<Commande> cmdAfficher = make_shared<CommandeAfficherListeEtNuages>(receveur);
-            executeur.executerEtSauvergarder(cmdAfficher);
+            executeur.executerCommande(cmdAfficher);
         }
         if (cmd == "q") break;
         if(cmd == "f")
         {
             shared_ptr<Commande> cmdCreerNuage = make_shared<CommandeCreerNuage>(receveur);
-            executeur.executerEtSauvergarder(cmdCreerNuage);
+            executeur.executerCommande(cmdCreerNuage);
         }
         if(cmd == "d")
         {
             shared_ptr<Commande> cmdDeplacerPoint = make_shared<CommandeDeplacerPoint>(receveur);
-            executeur.executerEtSauvergarder(cmdDeplacerPoint);
+            executeur.executerEtSauvegarder(cmdDeplacerPoint);
         }
         if(cmd == "s")
         {
             shared_ptr<Commande> cmdSupprimerPoint = make_shared<CommandeSupprimerPoint>(receveur);
-            executeur.executerEtSauvergarder(cmdSupprimerPoint);
+            executeur.executerEtSauvegarder(cmdSupprimerPoint);
         }
         if(cmd == "c1")
         {
             shared_ptr<Commande> cmdCreerSurface = make_shared<CommandeCreerSurfaceOrdreID>(receveur);
-            executeur.executerEtSauvergarder(cmdCreerSurface);
+            executeur.executerCommande(cmdCreerSurface);
         }
         if(cmd == "c2")
         {
             shared_ptr<Commande> cmdCreerSurface = make_shared<CommandeCreerSurfaceDistanceMin>(receveur);
-            executeur.executerEtSauvergarder(cmdCreerSurface);
+            executeur.executerCommande(cmdCreerSurface);
         }
         if (cmd == "o1")
         {
             shared_ptr<Commande> cmdAffichageTexture = make_shared<CommandeAffichageTexture>(receveur);
-            executeur.executerEtSauvergarder(cmdAffichageTexture);
+            executeur.executerCommande(cmdAffichageTexture);
         }
         if(cmd == "o2")
         {
-            
+            shared_ptr<Commande> cmdAffichageID = make_shared<CommandeAffichageID>(receveur);
+            executeur.executerCommande(cmdAffichageID);
         }
         if(cmd == "r")
         {
