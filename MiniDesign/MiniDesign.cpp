@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include "MiniDesignClient.h"
-#include "Executeur.h"
-#include "Commande.h"
+#include "executeur.h"
+#include "commande.h"
 
 using namespace std;
 
@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
         {
             shared_ptr<Commande> cmdDeplacerPoint = make_shared<CommandeDeplacerPoint>(receveur);
             executeur.executerEtSauvegarder(cmdDeplacerPoint);
+            cout << "Commande Crée pour le déplacement" << endl;
         }
         if(cmd == "s")
         {

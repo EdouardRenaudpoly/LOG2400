@@ -167,6 +167,7 @@ void MiniDesignClient::deplacerPoint(const shared_ptr<CommandeDeplacerPoint> &cm
     }
     else
     {
+        idPoint = cmd->getIdPoint();
         newX = cmd->getancienneX();
         newY = cmd->getancienneY();
     }
@@ -177,9 +178,13 @@ void MiniDesignClient::deplacerPoint(const shared_ptr<CommandeDeplacerPoint> &cm
 
     if (itPoint != points.end())
     {
-        cmd->setSavedData(*itPoint, (*itPoint)->getPointDeBase()->x, (*itPoint)->getPointDeBase()->y);
-        (*itPoint)->getPointDeBase()->x = newX;
-        (*itPoint)->getPointDeBase()->y = newY;
+        shared_ptr<Point> pointDeBase = (*itPoint)->getPointDeBase();
+
+        cmd->setSavedData(*itPoint, pointDeBase->getId(),
+             pointDeBase->x, pointDeBase->y);
+        
+        pointDeBase->x = newX;
+        pointDeBase->y = newY;
     }
     else
     {

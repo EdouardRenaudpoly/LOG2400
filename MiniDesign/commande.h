@@ -41,16 +41,19 @@ public:
     using CommandeAnnulable::CommandeAnnulable;
     void executer() override;
     void annuler() override;
-    void setSavedData(std::shared_ptr<IAffichablePoint> point, int oldX, int oldY)
+    void setSavedData(std::shared_ptr<IAffichablePoint> point, int idPoint, int oldX, int oldY)
     {
         pointDeplace = point;
+        ancienId = idPoint;
         ancienneX = oldX;
         ancienneY = oldY;
     }
+    const int getIdPoint() const { return ancienId; }
     const int getancienneX() const { return ancienneX; } 
     const int getancienneY() const { return ancienneY; }
 private:
     std::shared_ptr<IAffichablePoint> pointDeplace;
+    int ancienId = -1;
     int ancienneX = -1;
     int ancienneY= -1;
 };
